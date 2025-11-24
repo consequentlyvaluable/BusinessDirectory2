@@ -264,48 +264,26 @@ const closePopover = () => {
   document.removeEventListener("keydown", handlePopoverKeydown);
 };
 
-const positionPopover = (anchor) => {
-  if (!activePopover || !anchor) return;
+const positionPopover = () => {
+  if (!activePopover) return;
 
-  const rect = anchor.getBoundingClientRect();
-  const popoverRect = activePopover.getBoundingClientRect();
-  const scrollX = window.scrollX || document.documentElement.scrollLeft;
-  const scrollY = window.scrollY || document.documentElement.scrollTop;
   const viewportWidth = document.documentElement.clientWidth;
   const viewportHeight = document.documentElement.clientHeight;
 
-  const isMobileViewport = viewportWidth < 720;
-
-  if (isMobileViewport) {
-    activePopover.dataset.mode = "mobile";
-    activePopover.style.position = "fixed";
-    activePopover.style.left = "50%";
-    activePopover.style.top = "50%";
-    activePopover.style.setProperty("max-height", `${Math.max(360, viewportHeight - 48)}px`);
-    activePopover.style.setProperty("--arrow-left", "");
-    return;
-  }
-
-  activePopover.dataset.mode = "anchored";
-  activePopover.style.position = "absolute";
-  activePopover.style.removeProperty("max-height");
-
-  const spacing = 12;
-  const desiredLeft = scrollX + rect.left + rect.width / 2 - popoverRect.width / 2;
-  const minLeft = scrollX + 12;
-  const maxLeft = scrollX + viewportWidth - popoverRect.width - 12;
-  const left = Math.max(minLeft, Math.min(maxLeft, desiredLeft));
-  const top = scrollY + rect.bottom + spacing;
-
-  const anchorCenterX = scrollX + rect.left + rect.width / 2;
-  const arrowLeft = Math.max(
-    16,
-    Math.min(popoverRect.width - 32, anchorCenterX - left)
+  activePopover.dataset.mode = "centered";
+  activePopover.style.position = "fixed";
+  activePopover.style.left = "50%";
+  activePopover.style.top = "50%";
+  activePopover.style.transform = "translate(-50%, -50%)";
+  activePopover.style.setProperty(
+    "max-height",
+    `${Math.max(360, viewportHeight - 48)}px`
   );
-
-  activePopover.style.left = `${left}px`;
-  activePopover.style.top = `${top}px`;
-  activePopover.style.setProperty("--arrow-left", `${arrowLeft}px`);
+  activePopover.style.setProperty(
+    "max-width",
+    `${Math.min(640, viewportWidth - 40)}px`
+  );
+  activePopover.style.setProperty("--arrow-left", "");
 };
 
 const handleOutsideClick = (event) => {
@@ -316,7 +294,7 @@ const handleOutsideClick = (event) => {
 
 const handleViewportChange = () => {
   if (activePopover && activeAnchor) {
-    positionPopover(activeAnchor);
+    positionPopover();
   }
 };
 
@@ -357,7 +335,7 @@ const openPopover = (business, anchor) => {
   activeAnchor = anchor;
   activeAnchor.setAttribute("aria-expanded", "true");
 
-  positionPopover(anchor);
+  positionPopover();
 
   document.addEventListener("click", handleOutsideClick, true);
   window.addEventListener("resize", handleViewportChange);
