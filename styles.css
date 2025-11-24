@@ -469,6 +469,82 @@ textarea:focus {
   color: #1e3a8a;
 }
 
+.business-popover {
+  position: absolute;
+  min-width: min(360px, 94vw);
+  max-width: min(480px, 96vw);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+  z-index: 20;
+  isolation: isolate;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.business-popover[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.business-popover__arrow {
+  position: absolute;
+  top: -7px;
+  left: var(--arrow-left, 50%);
+  width: 14px;
+  height: 14px;
+  background: var(--color-card-bg);
+  border-left: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+  transform: translateX(-50%) rotate(45deg);
+  box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.12);
+  z-index: -1;
+}
+
+.business-popover__close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 999px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.business-popover__close:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text);
+}
+
+.business-popover__title {
+  margin: 0 2rem 0.75rem 0;
+  font-size: 1.25rem;
+}
+
+.business-popover__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.business-popover__meta .badge {
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.business-popover__description {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.9);
+  line-height: 1.6;
+}
+
 /* ==============================
    STATUS & FOOTER
 ============================== */
