@@ -510,7 +510,8 @@ textarea:focus {
   transform: translateY(0);
 }
 
-.business-popover[data-mode="mobile"] {
+.business-popover[data-mode="mobile"],
+.business-popover[data-mode="centered"] {
   position: fixed;
   left: 50%;
   top: 50%;
@@ -523,6 +524,10 @@ textarea:focus {
 
 .business-popover[data-mode="mobile"][data-open="true"] {
   transform: translate(-50%, -50%);
+}
+
+.business-popover[data-mode="centered"] {
+  width: min(640px, calc(100vw - 2.5rem));
 }
 
 .business-popover__arrow {
@@ -539,7 +544,8 @@ textarea:focus {
   z-index: -1;
 }
 
-.business-popover[data-mode="mobile"] .business-popover__arrow {
+.business-popover[data-mode="mobile"] .business-popover__arrow,
+.business-popover[data-mode="centered"] .business-popover__arrow {
   display: none;
 }
 
