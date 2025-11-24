@@ -18,6 +18,7 @@ const nameInput = businessForm?.querySelector('input[name="name"]');
 
 let activePopover;
 let activeAnchor;
+let pageOverlay;
 
 let googleMapsLoadedPromise;
 let locationAutocomplete;
@@ -195,6 +196,21 @@ const renderBusinesses = (items) => {
   businessListEl.append(fragment);
 };
 
+const ensurePageOverlay = () => {
+  if (pageOverlay) return pageOverlay;
+
+  const overlay = document.createElement("div");
+  overlay.className = "page-overlay";
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.addEventListener("click", () => {
+    closePopover();
+  });
+
+  document.body.append(overlay);
+  pageOverlay = overlay;
+  return overlay;
+};
+
 const ensurePopover = () => {
   if (activePopover) return activePopover;
 
@@ -237,8 +253,11 @@ const closePopover = () => {
   activePopover.removeAttribute("data-open");
   activePopover.style.top = "";
   activePopover.style.left = "";
+  activePopover.style.removeProperty("--arrow-left");
+  activePopover.dataset.mode = "";
   activeAnchor?.removeAttribute("aria-expanded");
   activeAnchor = null;
+  pageOverlay?.removeAttribute("data-open");
   document.removeEventListener("click", handleOutsideClick, true);
   window.removeEventListener("resize", handleViewportChange);
   window.removeEventListener("scroll", handleViewportChange, true);
@@ -253,6 +272,23 @@ const positionPopover = (anchor) => {
   const scrollX = window.scrollX || document.documentElement.scrollLeft;
   const scrollY = window.scrollY || document.documentElement.scrollTop;
   const viewportWidth = document.documentElement.clientWidth;
+  const viewportHeight = document.documentElement.clientHeight;
+
+  const isMobileViewport = viewportWidth < 720;
+
+  if (isMobileViewport) {
+    activePopover.dataset.mode = "mobile";
+    activePopover.style.position = "fixed";
+    activePopover.style.left = "50%";
+    activePopover.style.top = "50%";
+    activePopover.style.setProperty("max-height", `${Math.max(360, viewportHeight - 48)}px`);
+    activePopover.style.setProperty("--arrow-left", "");
+    return;
+  }
+
+  activePopover.dataset.mode = "anchored";
+  activePopover.style.position = "absolute";
+  activePopover.style.removeProperty("max-height");
 
   const spacing = 12;
   const desiredLeft = scrollX + rect.left + rect.width / 2 - popoverRect.width / 2;
@@ -292,6 +328,7 @@ const handlePopoverKeydown = (event) => {
 
 const openPopover = (business, anchor) => {
   const popover = ensurePopover();
+  const overlay = ensurePageOverlay();
 
   const [titleEl, metaEl, descriptionEl] = [
     popover.querySelector(".business-popover__title"),
@@ -314,6 +351,7 @@ const openPopover = (business, anchor) => {
 
   descriptionEl.textContent = business.description || "No description provided.";
 
+  overlay.setAttribute("data-open", "true");
   popover.setAttribute("data-open", "true");
   activeAnchor?.removeAttribute("aria-expanded");
   activeAnchor = anchor;
